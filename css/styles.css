@@ -1,0 +1,454 @@
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg: #f9fafb;
+    --surface: #ffffff;
+    --text: #1f2937;
+    --text-muted: #6b7280;
+    --error: #ef4444;
+    --success: #10b981;
+    --border: #d1d5db;
+    --focus-ring: rgba(79, 70, 229, 0.15);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 30px;
+    width: 100%;
+    max-width: 1050px;
+    margin-top: 40px;
+    align-items: start;
+}
+
+.checkout-main {
+    background: var(--surface);
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e5e7eb;
+}
+
+.checkout-sidebar {
+    position: sticky;
+    top: 40px;
+}
+
+/* Responsive breakpoint for Tablets and Mobile Screens */
+@media (max-width: 768px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+        margin-top: 10px;
+        gap: 20px;
+    }
+
+    .checkout-sidebar {
+        order: -1;
+        /* Order Summary rolls on top for mobile context */
+        position: static;
+    }
+
+    .checkout-main {
+        padding: 20px;
+    }
+}
+
+
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 35px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 10px;
+}
+
+.step {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding-bottom: 5px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.step.active {
+    color: var(--primary);
+    border-bottom: 3px solid var(--primary);
+    margin-bottom: -13px;
+    /* Keeps the bottom border exactly aligned */
+}
+
+
+h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+input {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    background-color: var(--surface);
+    color: var(--text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* Invalid / Error Forms Styling */
+input.invalid {
+    border-color: var(--error);
+    background-color: #fef2f2;
+}
+
+.error-message {
+    color: var(--error);
+    font-size: 13px;
+    margin-top: 5px;
+    min-height: 18px;
+    font-weight: 500;
+}
+
+.field-hint {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.btn {
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+    background: var(--primary-hover);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn:disabled {
+    background: #a5b4fc;
+    cursor: not-allowed;
+}
+
+.btn-group {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-prev {
+    background: #e5e7eb;
+    color: var(--text);
+}
+
+.btn-prev:hover {
+    background: #d1d5db;
+}
+
+/* Pure CSS Async Loading Spinner Engine */
+.spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.8s linear infinite;
+    position: absolute;
+}
+
+.btn-text {
+    transition: opacity 0.2s ease;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+.summary-card {
+    background: var(--surface);
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.summary-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 20px;
+}
+
+.summary-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 72%;
+}
+
+.item-name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+}
+
+.item-qty {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.item-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.summary-divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 20px 0;
+}
+
+.summary-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.row-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.row-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.success-text {
+    color: var(--success);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.total-row {
+    margin-top: 5px;
+}
+
+.total-label {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.total-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: -0.03em;
+}
+
+
+.review-card {
+    background: #f3f4f6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #e5e7eb;
+}
+
+.review-card h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin: 16px 0 6px 0;
+}
+
+.review-card h3:first-child {
+    margin-top: 0;
+}
+
+.review-card p {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.review-disclaimer {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(17, 24, 39, 0.6);
+    /* High contrast dark overlay background */
+    backdrop-filter: blur(4px);
+    /* Modern blur backdrop utility */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 999;
+}
+
+.status-card {
+    background: var(--surface);
+    padding: 40px 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.status-card h2 {
+    margin: 20px 0 10px 0;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+}
+
+.status-card p {
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* SVG Graphic Status Icon Displays */
+.icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon.success {
+    background: #d1fae5;
+    color: var(--success);
+}
+
+.icon.success::after {
+    content: "✓";
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.icon.error {
+    background: #fee2e2;
+    color: var(--error);
+}
+
+.icon.error::after {
+    content: "✕";
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
