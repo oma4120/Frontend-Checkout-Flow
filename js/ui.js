@@ -1,111 +1,157 @@
+// Centralized Document Node Selector Cache Object
 const DOM = {
-    form: document.getElementById('checkoutForm'),
-    steps: document.querySelectorAll('.form-step'),
-    indicators: document.querySelectorAll('.step'),
-    progressBar: document.querySelector('.progress-bar'),
-    submitBtn: document.getElementById('submitBtn'),
-    overlay: document.getElementById('statusOverlay'),
-    statusTitle: document.getElementById('statusTitle'),
-    statusMessage: document.getElementById('statusMessage'),
-    statusIcon: document.getElementById('statusIcon'),
-    statusCloseBtn: document.getElementById('statusCloseBtn'),
+    step1: document.getElementById('step-1'),
+    step2: document.getElementById('step-2'),
+    step3: document.getElementById('step-3'),
+    step4: document.getElementById('step-4'),
+
+    // Target fields map
+    inputs: {
+        fullName: document.getElementById('fullName'),
+        email: document.getElementById('email'),
+        phone: document.getElementById('phone'),
+        address: document.getElementById('address'),
+        city: document.getElementById('city'),
+        zip: document.getElementById('zip'),
+        cardNumber: document.getElementById('cardNumber'),
+        cardExpiry: document.getElementById('cardExpiry'),
+        cardCvv: document.getElementById('cardCvv')
+    },
+
+    // Progress bar informational nodes
+    trackers: [
+        document.getElementById('track-step-1'),
+        document.getElementById('track-step-2'),
+        document.getElementById('track-step-3'),
+        document.getElementById('track-step-4')
+    ],
+
+    // Confirmation output objects
     reviewContact: document.getElementById('review-contact'),
     reviewShipping: document.getElementById('review-shipping'),
-    reviewPayment: document.getElementById('review-payment')
+    reviewPayment: document.getElementById('review-payment'),
+
+    form: document.getElementById('checkoutForm'),
+    submitBtn: document.getElementById('submitBtn'),
+    statusModal: document.getElementById('statusModal'),
+    statusIcon: document.getElementById('statusIcon'),
+    statusTitle: document.getElementById('statusTitle'),
+    statusMessage: document.getElementById('statusMessage')
 };
 
+function switchSections(hideSection, showSection) {
+    hideSection.classList.add('hidden');
+    hideSection.classList.remove('active');
+
+    showSection.classList.remove('hidden');
+    showSection.classList.add('active');
+}
+
 export const UI = {
-    getStepData(stepNumber) {
-        const stepSection = document.getElementById(`step-${stepNumber}`);
-        if (!stepSection) return {};
-        const inputs = stepSection.querySelectorAll('input');
-        const data = {};
-        inputs.forEach(input => { data[input.name] = input.value; });
-        return data;
-    },
-
-    displayErrors(stepNumber, errors) {
-        const stepSection = document.getElementById(`step-${stepNumber}`);
-        const inputs = stepSection.querySelectorAll('input');
-        let isValid = true;
-
-        inputs.forEach(input => {
-            const errorElement = input.parentElement.querySelector('.error-message');
-            if (errors[input.name]) {
-                input.classList.add('invalid');
-                if (errorElement) errorElement.textContent = errors[input.name];
-                isValid = false;
+    // Passive Indicator Controller Subroutine logic
+    updateTracker(activeStepNum) {
+        DOM.trackers.forEach((trackNode, index) => {
+            if (index < activeStepNum) {
+                trackNode.classList.add('active');
             } else {
-                input.classList.remove('invalid');
-                if (errorElement) errorElement.textContent = '';
+                trackNode.classList.remove('active');
             }
         });
-        return isValid;
     },
 
-    navigateToStep(stepNumber) {
-        DOM.steps.forEach((step, idx) => {
-            step.classList.toggle('hidden', idx !== (stepNumber - 1));
-        });
-        DOM.indicators.forEach((indicator, idx) => {
-            indicator.classList.toggle('active', idx < stepNumber);
-        });
-        DOM.progressBar.setAttribute('aria-valuenow', stepNumber);
+    // Forward Navigation Triggers
+    goToStep2() {
+        switchSections(DOM.step1, DOM.step2);
+        this.updateTracker(2);
+    },
+    goToStep3() {
+        switchSections(DOM.step2, DOM.step3);
+        this.updateTracker(3);
+    },
+    goToStep4() {
+        this.compileReviewData();
+        switchSections(DOM.step3, DOM.step4);
+        this.updateTracker(4);
+    },
+
+    // Backward Navigation Triggers
+    goBackToStep1() {
+        switchSections(DOM.step2, DOM.step1);
+        this.updateTracker(1);
+    },
+    goBackToStep2() {
+        switchSections(DOM.step3, DOM.step2);
+        this.updateTracker(2);
+    },
+    goBackToStep3() {
+        switchSections(DOM.step4, DOM.step3);
+        this.updateTracker(3);
+    },
+
+    getInputValue(fieldName) {
+        return DOM.inputs[fieldName] ? DOM.inputs[fieldName].value : '';
+    },
+
+    displayFieldError(fieldName, errorMessage) {
+        const inputField = DOM.inputs[fieldName];
+        if (!inputField) return;
+
+        const errorContainer = inputField.nextElementSibling;
+
+        if (errorMessage) {
+            inputField.classList.add('invalid');
+            if (errorContainer && errorContainer.classList.contains('error-message')) {
+                errorContainer.textContent = errorMessage;
+            }
+        } else {
+            inputField.classList.remove('invalid');
+            if (errorContainer && errorContainer.classList.contains('error-message')) {
+                errorContainer.textContent = '';
+            }
+        }
     },
 
     compileReviewData() {
-        const name = document.getElementById('fullName').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const address = document.getElementById('address').value;
-        const city = document.getElementById('city').value;
-        const zip = document.getElementById('zip').value;
-        const card = document.getElementById('cardNumber').value;
+        DOM.reviewContact.innerHTML = `
+            ${DOM.inputs.fullName.value}<br>
+            ${DOM.inputs.email.value}<br>
+            ${DOM.inputs.phone.value}
+        `;
+        DOM.reviewShipping.innerHTML = `
+            ${DOM.inputs.address.value}<br>
+            ${DOM.inputs.city.value}, ${DOM.inputs.zip.value}
+        `;
 
-        DOM.reviewContact.innerHTML = `${name}<br>${email}<br>${phone}`;
-        DOM.reviewShipping.innerHTML = `${address}<br>${city}, ${zip}`;
-        DOM.reviewPayment.textContent = `Card ending in •••• ${card.slice(-4)}`;
+        const cardVal = DOM.inputs.cardNumber.value.replace(/\s+/g, '');
+        DOM.reviewPayment.textContent = `Card ending in •••• ${cardVal.slice(-4)}`;
     },
 
     setLoading(isLoading) {
         if (!DOM.submitBtn) return;
+        DOM.submitBtn.disabled = isLoading;
 
         const spinner = DOM.submitBtn.querySelector('.spinner');
         const btnText = DOM.submitBtn.querySelector('.btn-text');
-
-        DOM.submitBtn.disabled = isLoading;
 
         if (spinner) spinner.classList.toggle('hidden', !isLoading);
         if (btnText) btnText.style.opacity = isLoading ? '0' : '1';
     },
 
     showStatusModal(type, title, message) {
+        DOM.statusIcon.className = `icon ${type}`;
         DOM.statusTitle.textContent = title;
         DOM.statusMessage.textContent = message;
-        DOM.statusIcon.className = `icon ${type}`;
-        DOM.overlay.classList.remove('hidden');
+        DOM.statusModal.classList.remove('hidden');
     },
 
     hideStatusModal() {
-        DOM.overlay.classList.add('hidden');
-    },
-
-    formatCardInput(inputElement) {
-        let value = inputElement.value.replace(/\D/g, '');
-        let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
-        inputElement.value = formatted.substring(0, 19);
-    },
-
-    formatExpiryInput(inputElement) {
-        let value = inputElement.value.replace(/\D/g, '');
-        if (value.length > 2) {
-            inputElement.value = value.substring(0, 2) + '/' + value.substring(2, 4);
-        } else {
-            inputElement.value = value;
-        }
+        DOM.statusModal.classList.add('hidden');
     },
 
     resetForm() {
         DOM.form.reset();
+        Object.keys(DOM.inputs).forEach(field => this.displayFieldError(field, ''));
+        switchSections(DOM.step4, DOM.step1);
+        this.updateTracker(1);
     }
 };

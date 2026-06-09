@@ -1,4 +1,4 @@
-# Multi-Step Checkout Flow
+# Checkout Flow
 
 A highly interactive, accessible, and responsive multi-step checkout web application built entirely using modern native web technologies. This project showcases structured state management, real-time input validation, custom loading indicators, and dynamic feedback states under an architecture designed for high code quality and clear separation of concerns.
 

@@ -1,30 +1,33 @@
-export const validators = {
-    fullName: (value) => value.trim().length >= 3 ? '' : 'Name must be at least 3 characters.',
-    email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Enter a valid email address.',
-
-    phone: (value) => /^\+\d{1,4}\s?\d{6,14}$/.test(value.trim())
-        ? ''
-        : 'Enter a valid format: +(country code) then number (e.g., +1 5551234567)',
-
-    address: (value) => value.trim().length > 5 ? '' : 'Please enter a valid street address.',
-    city: (value) => value.trim().length > 1 ? '' : 'City is required.',
-    zip: (value) => /^\d{5}$/.test(value) ? '' : 'Zip code must be exactly 5 digits.',
-    cardNumber: (value) => {
-        const raw = value.replace(/\s+/g, '');
-        return /^\d{16}$/.test(raw) ? '' : 'Card number must be 16 digits.';
-    },
-    cardExpiry: (value) => /^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(value) ? '' : 'Use MM/YY format.',
-    cardCvv: (value) => /^\d{3,4}$/.test(value) ? '' : 'CVV must be 3 or 4 digits.'
+export const validateStep1 = (data) => {
+    let errors = {};
+    if (data.fullName.trim().length < 3) errors.fullName = 'Name must be at least 3 characters.';
+    if (!/^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$/.test(data.email.trim())) errors.email = 'Enter a valid email address.';
+    if (!/^\+\d{7,15}$/.test(data.phone.trim())) errors.phone = 'Phone must start with + followed strictly by numbers.';
+    return errors;
 };
 
-
-export function validateData(formData) {
-    const errors = {};
-    for (const [name, value] of Object.entries(formData)) {
-        if (validators[name]) {
-            const errorMsg = validators[name](value);
-            if (errorMsg) errors[name] = errorMsg;
-        }
-    }
+export const validateStep2 = (data) => {
+    let errors = {};
+    if (data.address.trim().length < 5) errors.address = 'Please enter a valid street address.';
+    if (data.city.trim().length < 2) errors.city = 'City name is required (at least 2 characters).';
+    if (data.zip.trim().length !== 5) errors.zip = 'Zip code must be exactly 5 digits.';
     return errors;
-}
+};
+
+export const validateStep3 = (data) => {
+    let errors = {};
+    const rawCard = data.cardNumber.replace(/\s+/g, '');
+    if (!/^\d{16}$/.test(rawCard)) errors.cardNumber = 'Card number must be 16 digits.';
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(data.cardExpiry)) {
+        errors.cardExpiry = 'Expiry must be a valid MM/YY format.';
+    } else {
+        const [month, year] = data.cardExpiry.split('/');
+        const expiryDate = new Date(parseInt('20' + year, 10), parseInt(month, 10) - 1);
+        const currentDate = new Date();
+        currentDate.setDate(1);
+
+        if (expiryDate < currentDate) errors.cardExpiry = 'This credit card has expired.';
+    }
+    if (!/^\d{3,4}$/.test(data.cardCvv)) errors.cardCvv = 'CVV must be 3 or 4 digits.';
+    return errors;
+};
