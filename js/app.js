@@ -1,9 +1,7 @@
 import { UI } from './ui.js';
 import * as Check from './validation.js';
 
-/* ==========================================================================
-   BUTTON CLICK ROUTING ACTION INTERCEPT CONTROLLERS
-   ========================================================================== */
+// BUTTON CLICK ROUTING ACTION INTERCEPT CONTROLLERS
 document.addEventListener('click', (e) => {
 
     // --- STEP 1 ACTIONS ---
@@ -71,9 +69,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-/* ==========================================================================
-   LIVE MASK INPUT KEYSTROKE FORMATTING SYSTEMS
-   ========================================================================== */
+// LIVE MASK INPUT KEYSTROKE FORMATTING SYSTEMS & ERROR CLEARING
 document.addEventListener('input', (e) => {
 
     // --- FULL NAME: Strictly letters and spaces ---
@@ -126,14 +122,13 @@ document.addEventListener('input', (e) => {
         }
     }
 
-    // 2. Clear any lingering error visual warnings cleanly as they type (Added 'city')
+    // 2. Clear any error visual warnings cleanly as they type
     if (e.inputType && ['fullName', 'email', 'phone', 'address', 'city', 'zip', 'cardNumber', 'cardExpiry', 'cardCvv'].includes(e.target.id)) {
         UI.displayFieldError(e.target.id, '');
     }
 });
-/* ==========================================================================
-   ASYNC PAYLOAD SUBMISSION API SIMULATOR FUNNEL
-   ========================================================================== */
+
+// ASYNC PAYLOAD SUBMISSION API SIMULATOR FUNNEL
 document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
